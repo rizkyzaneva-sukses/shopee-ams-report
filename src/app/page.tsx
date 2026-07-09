@@ -85,7 +85,7 @@ export default async function HomePage({
         </div>
         <div className="bg-white rounded-xl p-4 shadow-sm border">
           <p className="text-sm text-gray-500">Total Order</p>
-          <p className="text-2xl font-bold">{formatNumber(shopSummary._sum.orderCount)}</p>
+          <p className="text-2xl font-bold">{formatNumber(Number(shopSummary._sum.orderCount))}</p>
         </div>
         <div className="bg-white rounded-xl p-4 shadow-sm border">
           <p className="text-sm text-gray-500">Total Komisi</p>

@@ -60,8 +60,8 @@ export default async function ProductPage({
                 <td className="py-2 px-3 text-gray-400">{i + 1}</td>
                 <td className="py-2 px-3 max-w-[250px] truncate" title={p.productName}>{p.productName}</td>
                 <td className="py-2 px-3">{p.shopId}</td>
-                <td className="py-2 px-3 text-right">{formatNumber(p._sum.clickCount)}</td>
-                <td className="py-2 px-3 text-right">{formatNumber(p._sum.orderCount)}</td>
+                <td className="py-2 px-3 text-right">{formatNumber(Number(p._sum.clickCount))}</td>
+                <td className="py-2 px-3 text-right">{formatNumber(Number(p._sum.orderCount))}</td>
                 <td className="py-2 px-3 text-right font-medium">{formatCurrency(p._sum.gmv)}</td>
                 <td className="py-2 px-3 text-right text-blue-600">{formatCurrency(p._sum.commission)}</td>
                 <td className="py-2 px-3 text-right">{formatPercent(p._avg.conversionRate)}</td>

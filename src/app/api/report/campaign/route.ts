@@ -33,9 +33,9 @@ export async function GET(req: NextRequest) {
         campaignType: c.campaignType,
         shopId: c.shopId,
         gmv: Number(c._sum.gmv || 0),
-        orders: c._sum.orderCount || 0,
+        orders: Number(c._sum.orderCount || 0),
         commission: Number(c._sum.commission || 0),
-        clicks: c._sum.clickCount || 0,
+        clicks: Number(c._sum.clickCount || 0),
         avgCvr: Number(c._avg.conversionRate || 0),
       })),
     })

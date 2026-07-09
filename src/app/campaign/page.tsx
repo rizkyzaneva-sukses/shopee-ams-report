@@ -76,8 +76,8 @@ export default async function CampaignPage({
                   </span>
                 </td>
                 <td className="py-2 px-3">{c.shopId}</td>
-                <td className="py-2 px-3 text-right">{formatNumber(c._sum.clickCount)}</td>
-                <td className="py-2 px-3 text-right">{formatNumber(c._sum.orderCount)}</td>
+                <td className="py-2 px-3 text-right">{formatNumber(Number(c._sum.clickCount))}</td>
+                              <td className="py-2 px-3 text-right">{formatNumber(Number(c._sum.orderCount))}</td>
                 <td className="py-2 px-3 text-right font-medium">{formatCurrency(c._sum.gmv)}</td>
                 <td className="py-2 px-3 text-right text-blue-600">{formatCurrency(c._sum.commission)}</td>
                 <td className="py-2 px-3 text-right">{formatPercent(c._avg.conversionRate)}</td>
