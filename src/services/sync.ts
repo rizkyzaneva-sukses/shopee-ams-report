@@ -5,7 +5,7 @@ import { sleep } from '@/lib/utils'
 
 export async function syncShopPerformance(shopId: number, startDate: string, endDate: string) {
   const token = await ensureToken(shopId)
-  const items = await fetchAllPages(
+  const items = await fetchAllPages<any>(
     (page) => getShopPerformance(shopId, token, startDate, endDate, page),
     'shop_performance_list'
   )
@@ -39,7 +39,7 @@ export async function syncShopPerformance(shopId: number, startDate: string, end
 
 export async function syncProductPerformance(shopId: number, startDate: string, endDate: string) {
   const token = await ensureToken(shopId)
-  const items = await fetchAllPages(
+  const items = await fetchAllPages<any>(
     (page) => getProductPerformance(shopId, token, startDate, endDate, page),
     'product_performance_list'
   )
@@ -77,7 +77,7 @@ export async function syncProductPerformance(shopId: number, startDate: string, 
 
 export async function syncCampaignPerformance(shopId: number, startDate: string, endDate: string) {
   const token = await ensureToken(shopId)
-  const openItems = await fetchAllPages(
+  const openItems = await fetchAllPages<any>(
     (page) => getOpenCampaignPerformance(shopId, token, startDate, endDate, page),
     'open_campaign_performance_list'
   )
@@ -99,7 +99,7 @@ export async function syncCampaignPerformance(shopId: number, startDate: string,
   }
   await sleep(300)
 
-  const targetedItems = await fetchAllPages(
+  const targetedItems = await fetchAllPages<any>(
     (page) => getOpenCampaignPerformance(shopId, token, startDate, endDate, page),
     'open_campaign_performance_list'
   )
@@ -124,7 +124,7 @@ export async function syncCampaignPerformance(shopId: number, startDate: string,
 
 export async function syncConversions(shopId: number, startDate: string, endDate: string) {
   const token = await ensureToken(shopId)
-  const items = await fetchAllPages(
+  const items = await fetchAllPages<any>(
     (page) => getConversionReport(shopId, token, startDate, endDate, page),
     'conversion_list'
   )
@@ -153,7 +153,7 @@ export async function syncConversions(shopId: number, startDate: string, endDate
 
 export async function syncValidations(shopId: number, startDate: string, endDate: string) {
   const token = await ensureToken(shopId)
-  const items = await fetchAllPages(
+  const items = await fetchAllPages<any>(
     (page) => getValidationReport(shopId, token, startDate, endDate, page),
     'validation_report_list'
   )
