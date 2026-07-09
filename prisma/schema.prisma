@@ -1,0 +1,117 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model ShopCredential {
+  id            Int      @id @default(autoincrement())
+  shopId        Int      @unique
+  shopName      String
+  accessToken   String
+  refreshToken  String
+  tokenExpiry   DateTime
+  status        String   @default("active") // active, disconnected
+  lastSyncAt    DateTime?
+  createdAt     DateTime @default(now())
+}
+
+model ShopPerformanceSnapshot {
+  id             Int      @id @default(autoincrement())
+  shopId         Int
+  shopName       String
+  date           DateTime @db.Date
+  clickCount     Int      @default(0)
+  orderCount     Int      @default(0)
+  gmv            Decimal  @default(0) @db.Decimal(15, 2)
+  commission     Decimal  @default(0) @db.Decimal(15, 2)
+  conversionRate Decimal  @default(0) @db.Decimal(5, 4)
+  unitSoldCount  Int      @default(0)
+  createdAt      DateTime @default(now())
+
+  @@unique([shopId, date])
+  @@index([date])
+}
+
+model ProductPerformanceSnapshot {
+  id             Int      @id @default(autoincrement())
+  productId      Int
+  productName    String
+  shopId         Int
+  date           DateTime @db.Date
+  clickCount     Int      @default(0)
+  orderCount     Int      @default(0)
+  gmv            Decimal  @default(0) @db.Decimal(15, 2)
+  commission     Decimal  @default(0) @db.Decimal(15, 2)
+  conversionRate Decimal  @default(0) @db.Decimal(5, 4)
+  unitSoldCount  Int      @default(0)
+  commissionRate Decimal  @default(0) @db.Decimal(5, 4)
+  createdAt      DateTime @default(now())
+
+  @@unique([productId, date])
+  @@index([date])
+  @@index([shopId])
+}
+
+model ConversionRecord {
+  id               Int      @id @default(autoincrement())
+  orderId          String   @unique
+  productId        Int
+  productName      String
+  shopId           Int
+  shopName         String
+  orderAmount      Decimal  @db.Decimal(15, 2)
+  commission       Decimal  @db.Decimal(15, 2)
+  commissionRate   Decimal  @db.Decimal(5, 4)
+  conversionTime   DateTime
+  orderStatus      String
+  commissionStatus String
+  campaignId       Int?
+  unitSold         Int      @default(1)
+  createdAt        DateTime @default(now())
+
+  @@index([conversionTime])
+  @@index([commissionStatus])
+  @@index([productId])
+}
+
+model ValidationRecord {
+  id                 Int      @id @default(autoincrement())
+  validationId       String   @unique
+  orderId            String
+  productId          Int
+  productName        String
+  shopId             Int
+  validationStatus   String
+  originalCommission Decimal  @db.Decimal(15, 2)
+  adjustedCommission Decimal  @db.Decimal(15, 2)
+  commissionDiff     Decimal  @db.Decimal(15, 2)
+  reason             String?
+  validationTime     DateTime
+  createdAt          DateTime @default(now())
+
+  @@index([validationStatus])
+  @@index([validationTime])
+}
+
+model CampaignPerformance {
+  id             Int      @id @default(autoincrement())
+  campaignId     Int
+  campaignName   String
+  campaignType   String
+  shopId         Int
+  date           DateTime @db.Date
+  clickCount     Int      @default(0)
+  orderCount     Int      @default(0)
+  gmv            Decimal  @default(0) @db.Decimal(15, 2)
+  commission     Decimal  @default(0) @db.Decimal(15, 2)
+  conversionRate Decimal  @default(0) @db.Decimal(5, 4)
+  unitSoldCount  Int      @default(0)
+  createdAt      DateTime @default(now())
+
+  @@unique([campaignId, date])
+  @@index([date])
+}
