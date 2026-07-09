@@ -1,18 +1,19 @@
-export function formatNumber(n: number | bigint | null | undefined): string {
+export function formatNumber(n: number | bigint | null | undefined | any): string {
   if (n == null) return '0'
-  const num = typeof n === 'bigint' ? Number(n) : n
+  const num = typeof n === 'object' && n?.toNumber ? n.toNumber() : typeof n === 'bigint' ? Number(n) : Number(n)
   return new Intl.NumberFormat('id-ID').format(num)
 }
 
-export function formatCurrency(n: number | bigint | null | undefined): string {
+export function formatCurrency(n: number | bigint | null | undefined | any): string {
   if (n == null) return 'Rp 0'
-  const num = typeof n === 'bigint' ? Number(n) : n
+  const num = typeof n === 'object' && n?.toNumber ? n.toNumber() : typeof n === 'bigint' ? Number(n) : Number(n)
   return `Rp ${new Intl.NumberFormat('id-ID').format(num)}`
 }
 
-export function formatPercent(n: number | null | undefined): string {
+export function formatPercent(n: number | null | undefined | any): string {
   if (n == null) return '0%'
-  return `${(Number(n) * 100).toFixed(2)}%`
+  const num = typeof n === 'object' && n?.toNumber ? n.toNumber() : Number(n)
+  return `${(num * 100).toFixed(2)}%`
 }
 
 export function formatDate(d: string | Date): string {
