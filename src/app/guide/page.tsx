@@ -370,7 +370,7 @@ export default function GuidePage() {
 
 // ═══════════ COMPONENTS ═══════════
 
-function Section({ title, children }: { title: string; children: React.ReactNode }) {
+function Section({ title, children, icon }: { title: string; children: React.ReactNode; icon?: string }) {
   return (
     <div className="bg-white rounded-xl p-6 shadow-sm border space-y-3">
       <h2 className="text-lg font-bold">{title}</h2>
