@@ -4,7 +4,79 @@ const PARTNER_ID = process.env.SHOPEE_PARTNER_ID!
 const PARTNER_KEY = process.env.SHOPEE_PARTNER_KEY!
 const BASE_URL = 'https://partner.shopeemobile.com/api/v2'
 
+// ═══════════ OAUTH HELPERS ═══════════
+
 function generateSign(path: string, timestamp: number, shopId: number, accessToken: string): string {
+  const baseString = `${PARTNER_ID}${path}${timestamp}${accessToken}${shopId}`
+  return crypto.createHmac('sha256', PARTNER_KEY).update(baseString).digest('hex')
+}
+
+function generateAuthSign(timestamp: number): string {
+  const baseString = `${PARTNER_ID}${timestamp}`
+  return crypto.createHmac('sha256', PARTNER_KEY).update(baseString).digest('hex')
+}
+
+/**
+ * Generate the Shopee OAuth authorization URL
+ * User will be redirected to this URL to login & authorize the app
+ */
+export function getShopeeAuthUrl(redirectUri: string): string {
+  const timestamp = Math.floor(Date.now() / 1000)
+  const sign = generateAuthSign(timestamp)
+
+  const url = new URL(`${BASE_URL}/shop/auth_partner`)
+  url.searchParams.set('partner_id', PARTNER_ID)
+  url.searchParams.set('redirect', redirectUri)
+  url.searchParams.set('timestamp', String(timestamp))
+  url.searchParams.set('sign', sign)
+
+  return url.toString()
+}
+
+/**
+ * Exchange authorization code for access_token + refresh_token
+ * Called after user authorizes and Shopee redirects back with ?code=xxx&shop_id=xxx
+ */
+export async function exchangeAccessToken(code: string, shopId: number) {
+  const path = '/api/v2/shop/access_token'
+  const timestamp = Math.floor(Date.now() / 1000)
+  // For access_token endpoint, sign uses empty access_token
+  const baseString = `${PARTNER_ID}${path}${timestamp}${''}${shopId}`
+  const sign = crypto.createHmac('sha256', PARTNER_KEY).update(baseString).digest('hex')
+
+  const url = new URL(`${BASE_URL}/shop/access_token`)
+  const body = {
+    partner_id: Number(PARTNER_ID),
+    code,
+    shop_id: shopId,
+    timestamp,
+    sign,
+  }
+
+  const res = await fetch(url.toString(), {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+  })
+
+  const data = await res.json()
+
+  if (data.error) {
+    throw new Error(`Token exchange failed: ${data.error} - ${data.message}`)
+  }
+
+  return data.response as {
+    access_token: string
+    refresh_token: string
+    expire_in: number // seconds
+    shop_id: number
+    shop_name?: string
+  }
+}
+
+// ═══════════ AMS API HELPERS ═══════════
+
+function generateAmsSign(path: string, timestamp: number, shopId: number, accessToken: string): string {
   const baseString = `${PARTNER_ID}${path}${timestamp}${accessToken}${shopId}`
   return crypto.createHmac('sha256', PARTNER_KEY).update(baseString).digest('hex')
 }
@@ -12,7 +84,7 @@ function generateSign(path: string, timestamp: number, shopId: number, accessTok
 export async function shopeeGet(endpoint: string, shopId: number, accessToken: string, params: Record<string, any> = {}) {
   const path = `/api/v2/ams/${endpoint}`
   const timestamp = Math.floor(Date.now() / 1000)
-  const sign = generateSign(path, timestamp, shopId, accessToken)
+  const sign = generateAmsSign(path, timestamp, shopId, accessToken)
 
   const url = new URL(`${BASE_URL}/ams/${endpoint}`)
   url.searchParams.set('partner_id', PARTNER_ID)
@@ -83,7 +155,7 @@ export async function getValidationList(shopId: number, token: string, page = 1)
 export async function refreshAccessToken(refreshToken: string, shopId: number) {
   const path = '/api/v2/auth/token/get_access_token'
   const timestamp = Math.floor(Date.now() / 1000)
-  const sign = generateSign(path, timestamp, shopId, refreshToken)
+  const sign = generateAmsSign(path, timestamp, shopId, refreshToken)
 
   const url = new URL(`${BASE_URL}/auth/token/get_access_token`)
   url.searchParams.set('partner_id', PARTNER_ID)
