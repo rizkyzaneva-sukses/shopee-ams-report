@@ -9,11 +9,11 @@ export const dynamic = 'force-dynamic'
  */
 export async function GET(req: NextRequest) {
   try {
-    const { searchParams } = new URL(req.url)
-    const baseUrl = searchParams.get('redirect_uri') || `${req.nextUrl.origin}`
+    // Use the actual domain, not the container's internal address
+    const origin = 'https://ams.maulanacorp.my.id'
 
     // The callback URL where Shopee will redirect after authorization
-    const redirectUri = `${baseUrl}/api/auth/shopee/callback`
+    const redirectUri = `${origin}/api/auth/shopee/callback`
 
     // Generate Shopee auth URL
     const authUrl = getShopeeAuthUrl(redirectUri)
