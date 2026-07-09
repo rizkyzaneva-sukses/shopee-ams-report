@@ -1,0 +1,45 @@
+{
+  "http": {
+    "routers": {
+      "shopee-ams-http": {
+        "service": "shopee-ams-svc",
+        "rule": "Host(`ams.maulanacorp.my.id`) && PathPrefix(`/`)",
+        "priority": 1000,
+        "middlewares": ["redirect-to-https", "bad-gateway-error-page"],
+        "entryPoints": ["http"]
+      },
+      "shopee-ams-https": {
+        "service": "shopee-ams-svc",
+        "rule": "Host(`ams.maulanacorp.my.id`) && PathPrefix(`/`)",
+        "priority": 1000,
+        "middlewares": ["bad-gateway-error-page"],
+        "tls": {
+          "certResolver": "letsencrypt",
+          "domains": [
+            {
+              "main": "ams.maulanacorp.my.id"
+            }
+          ]
+        },
+        "entryPoints": ["https"]
+      }
+    },
+    "services": {
+      "shopee-ams-svc": {
+        "loadBalancer": {
+          "servers": [
+            {
+              "url": "http://zaneva_shopee-ams-app:3000/"
+            }
+          ],
+          "passHostHeader": true,
+          "healthCheck": {
+            "path": "/",
+            "interval": "10s",
+            "timeout": "3s"
+          }
+        }
+      }
+    }
+  }
+}

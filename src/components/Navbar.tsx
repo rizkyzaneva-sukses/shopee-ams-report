@@ -7,6 +7,7 @@ const links = [
   { href: '/conversion', label: '🔄 Conversion' },
   { href: '/validation', label: '✅ Validation' },
   { href: '/shops', label: '🏪 Toko' },
+  { href: '/guide', label: '📖 Panduan' },
 ]
 
 export default function Navbar() {
