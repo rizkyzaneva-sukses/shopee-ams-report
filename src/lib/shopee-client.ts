@@ -100,7 +100,7 @@ export async function refreshAccessToken(refreshToken: string, shopId: number) {
 }
 
 export async function fetchAllPages<T>(
-  fetchFn: (page: number) => Promise<{ [key: string]: T[]; more: boolean }>,
+  fetchFn: (page: number) => Promise<Record<string, any> & { more: boolean }>,
   listKey: string,
   maxPages = 20
 ): Promise<T[]> {
