@@ -12,7 +12,8 @@ function generateSign(path: string, timestamp: number, shopId: number, accessTok
 }
 
 function generateAuthSign(timestamp: number): string {
-  const baseString = `${PARTNER_ID}${timestamp}`
+  const path = '/api/v2/shop/auth_partner'
+  const baseString = `${PARTNER_ID}${path}${timestamp}`
   return crypto.createHmac('sha256', PARTNER_KEY).update(baseString).digest('hex')
 }
 
